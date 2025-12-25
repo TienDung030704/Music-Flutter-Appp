@@ -1,0 +1,52 @@
+{
+    "success": true,
+    "data": {
+        "songs": [
+            {
+                "id": 207941314,
+                "title": "Vietnam (Remix)",
+                "artists": "SOFT BALLET",
+                "album": "Soft Ballet 1992-1995 The Best + 8 Other Mixes",
+                "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/80/e3/b2/80e3b2e8-4fa9-b3ef-9f4e-eae4633548a6/mzi.bomdfszp.jpg/600x600bb.jpg",
+                "durationMillis": 281463,
+                "streamUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/87/03/3a/87033a00-059a-6dca-6ad4-90c61fc336e4/mzaf_15006480381934733764.plus.aac.p.m4a"
+            },
+            {
+                "id": 639580978,
+                "title": "Good Morning Vietnam",
+                "artists": "Mission-X",
+                "album": "Good Morning Vietnam (Remix 93) - EP",
+                "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/96/50/fe/9650fe59-4859-921b-fcf9-17d17fe8654a/cover.jpg/600x600bb.jpg",
+                "durationMillis": 280500,
+                "streamUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/cb/f5/d3/cbf5d38c-1984-b996-14fd-37e33abe3fb6/mzaf_16430834702574037377.plus.aac.p.m4a"
+            },
+            {
+                "id": 642365069,
+                "title": "Good Morning Vietnam (Jungle Mix)",
+                "artists": "Mission-X II",
+                "album": "Good Morning Vietnam (Remix 95) - EP",
+                "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/6b/86/45/6b86456e-0778-aac4-92f8-8a25d36c7c28/cover.jpg/600x600bb.jpg",
+                "durationMillis": 229928,
+                "streamUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/Music/v4/d1/64/98/d1649853-145a-2079-768b-bbf9ac31db22/mzaf_1271615702565263843.plus.aac.p.m4a"
+            },
+            {
+                "id": 1471897184,
+                "title": "Vietnam (Remix)",
+                "artists": "Bash Bwa",
+                "album": "Somethin' Bout This Summer",
+                "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/77/72/29/7772293c-9497-9cbb-d9b2-7e39d2c21613/artwork.jpg/600x600bb.jpg",
+                "durationMillis": 90720,
+                "streamUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/18/6f/71/186f7108-4ccc-b5a7-6e8f-605415d7a1e2/mzaf_10684125127494045322.plus.aac.p.m4a"
+            },
+            {
+                "id": 1552697080,
+                "title": "Vietnam (Lafawndah Remix)",
+                "artists": "Tricky",
+                "album": "Fall to Pieces (Remixes) - EP",
+                "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a5/4e/d9/a54ed9d2-3b81-cc80-0d79-c218480045bc/4062548023244_3000.jpg/600x600bb.jpg",
+                "durationMillis": 205173,
+                "streamUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview124/v4/12/3a/17/123a176f-a31c-0506-6e37-0f2b22a816c9/mzaf_9626968503866542459.plus.aac.p.m4a"
+            }
+        ]
+    }
+}

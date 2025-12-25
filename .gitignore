@@ -1,0 +1,85 @@
+# Flutter/Dart
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/pubspec.lock
+**/*.iml
+**/nul
+
+# iOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/.generated/
+
+# Android
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/.idea/
+**/android/key.properties
+**/*.jks
+
+# macOS
+**/macos/Pods/
+**/macos/.symlinks/
+**/macos/Flutter/ephemeral/
+
+# Windows
+**/windows/flutter/ephemeral/
+
+# Web
+**/web/.dart_tool/
+
+# Backend
+**/uploads/audio/
+**/vendor/
+**/.env
+
+# Database
+**/*.sql.backup
+**/*.db
+
+# Logs
+**/*.log
+**/*.log.*
+
+# Miscellaneous
+**/.DS_Store
+**/.vscode/
+**/.idea/
+**/*.pyc
+**/*.swp
+**/.atom/
+**/.bash_history
+**/.flutter-devtools/
+**/.pub-cache/
+**/.pub/
+**/coverage/
+
+# Temporary files
+**/temp/
+**/tmp/
+**/*.tmp
+
+# OS generated files
+**/Thumbs.db
+**/.directory
+
+# macOS folder attributes
+**/__MACOSX/
+
+# PHP
+**/vendor/
+**/.env
+
+# Node.js (if any)
+**/node_modules/
+
+# IDE
+**/*.code-workspace
