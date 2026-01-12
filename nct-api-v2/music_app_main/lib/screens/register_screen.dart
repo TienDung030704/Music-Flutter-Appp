@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../services/auth_service.dart';
 import '../helpers/notification_helper.dart';
 
+// Màn hình đăng ký tài khoản mới cho người dùng
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -11,20 +12,24 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  // Controllers để quản lý các input field
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  // Key để validate toàn bộ form
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _isLoading = false;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-  bool _acceptTerms = false;
+  // Biến trạng thái của màn hình
+  bool _isLoading = false; // Trạng thái đang xử lý đăng ký
+  bool _obscurePassword = true; // Ẩn/hiện mật khẩu
+  bool _obscureConfirmPassword = true; // Ẩn/hiện xác nhận mật khẩu
+  bool _acceptTerms = false; // Đồng ý điều khoản
 
   @override
   void dispose() {
+    // Giải phóng bộ nhớ khi widget bị hủy
     _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -32,36 +37,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // Xử lý logic đăng ký tài khoản
   Future<void> _handleRegister() async {
+    // Kiểm tra validation form
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    // Kiểm tra đồng ý điều khoản
     if (!_acceptTerms) {
       NotificationHelper.showWarning('Vui lòng đồng ý với điều khoản sử dụng');
       return;
     }
 
+    // Bắt đầu trạng thái loading
     setState(() => _isLoading = true);
 
     try {
+      // Gọi API đăng ký
       final result = await AuthService.register(
         fullName: _fullNameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
 
+      // Kết thúc loading
       setState(() => _isLoading = false);
 
+      // Xử lý kết quả đăng ký
       if (result.success) {
         NotificationHelper.showSuccess('Đăng ký thành công!');
-        // Delay để toast hiển thị trước khi navigate
+        // Delay để hiển thị thông báo trước khi chuyển màn hình
         await Future.delayed(Duration(milliseconds: 1500));
         Navigator.pop(context);
       } else {
         NotificationHelper.showError(result.message ?? 'Đăng ký thất bại');
       }
     } catch (e) {
+      // Xử lý lỗi kết nối
       setState(() => _isLoading = false);
       NotificationHelper.showError('Lỗi kết nối: ${e.toString()}');
     }
@@ -71,9 +84,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      // Thanh tiêu đề với nút quay lại
       appBar: AppBar(
         backgroundColor: AppTheme.background,
-        elevation: 0,
+elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppTheme.textPrimary),
           onPressed: () => Navigator.pop(context),
@@ -87,6 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
+      // Nội dung có thể cuộn với form đăng ký
       body: SingleChildScrollView(
         padding: EdgeInsets.all(24),
         child: Form(
@@ -96,6 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               SizedBox(height: 20),
 
+              // Tiêu đề chính
               Text(
                 'Tạo tài khoản mới',
                 textAlign: TextAlign.center,
@@ -108,6 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 8),
 
+              // Mô tả phụ
               Text(
                 'Điền thông tin để tạo tài khoản KDT Music',
                 textAlign: TextAlign.center,
@@ -116,7 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 32),
 
-              // Full Name Field
+              // Ô input họ và tên với validation
               TextFormField(
                 controller: _fullNameController,
                 decoration: InputDecoration(
@@ -137,6 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: AppTheme.surface,
                 ),
+                // Validator kiểm tra tên hợp lệ
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập họ và tên';
@@ -150,11 +168,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 20),
 
-              // Email Field
+              // Ô input email với validation
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
+decoration: InputDecoration(
                   labelText: 'Email',
                   hintText: 'Nhập địa chỉ email',
                   prefixIcon: Icon(
@@ -172,6 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: AppTheme.surface,
                 ),
+                // Validator kiểm tra email hợp lệ
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập email';
@@ -187,7 +206,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 20),
 
-              // Password Field
+              // Ô input mật khẩu với nút ẩn/hiện
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -217,12 +236,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: AppTheme.surface,
                 ),
+                // Validator kiểm tra độ dài mật khẩu
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập mật khẩu';
                   }
                   if (value.length < 6) {
-                    return 'Mật khẩu phải có ít nhất 6 ký tự';
+return 'Mật khẩu phải có ít nhất 6 ký tự';
                   }
                   return null;
                 },
@@ -230,7 +250,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 20),
 
-              // Confirm Password Field
+              // Ô input xác nhận mật khẩu
               TextFormField(
                 controller: _confirmPasswordController,
                 obscureText: _obscureConfirmPassword,
@@ -263,6 +283,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: AppTheme.surface,
                 ),
+                // Validator kiểm tra mật khẩu khớp nhau
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng xác nhận mật khẩu';
@@ -276,7 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 24),
 
-              // Terms and Conditions
+              // Checkbox đồng ý điều khoản
               Row(
                 children: [
                   Checkbox(
@@ -297,7 +318,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           color: AppTheme.textSecondary,
                           fontSize: 14,
                         ),
-                      ),
+),
                     ),
                   ),
                 ],
@@ -305,7 +326,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 32),
 
-              // Register Button
+              // Nút đăng ký với loading indicator
               ElevatedButton(
                 onPressed: _isLoading ? null : _handleRegister,
                 style: ElevatedButton.styleFrom(
@@ -339,7 +360,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 24),
 
-              // Login Link
+              // Link chuyển về màn hình đăng nhập
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
