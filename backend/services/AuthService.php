@@ -1,12 +1,15 @@
 <?php
 
+// Dịch vụ xác thực người dùng - xử lý đăng nhập, đăng ký và quản lý token
 class AuthService {
     private $baseUrl;
     
+    // Khởi tạo với URL cơ sở của backend
     public function __construct($baseUrl = 'http://localhost/Music-App-Flutter/backend') {
         $this->baseUrl = rtrim($baseUrl, '/');
     }
     
+    // Gửi yêu cầu đăng ký tài khoản mới
     public function register($fullName, $email, $password) {
         return $this->makeRequest('POST', '/auth/register', [
             'full_name' => $fullName,
@@ -15,6 +18,7 @@ class AuthService {
         ]);
     }
     
+    // Gửi yêu cầu đăng nhập với email và mật khẩu
     public function login($email, $password) {
         return $this->makeRequest('POST', '/auth/login', [
             'email' => $email,
@@ -22,18 +26,21 @@ class AuthService {
         ]);
     }
     
+    // Gửi yêu cầu đăng xuất với token xác thực
     public function logout($token) {
         return $this->makeRequest('POST', '/auth/logout', [], [
             'Authorization: Bearer ' . $token
         ]);
     }
     
+    // Gửi yêu cầu khôi phục mật khẩu qua email
     public function forgotPassword($email) {
         return $this->makeRequest('POST', '/auth/forgot-password', [
             'email' => $email
         ]);
     }
     
+    // Đặt lại mật khẩu mới với token khôi phục
     public function resetPassword($token, $password) {
         return $this->makeRequest('POST', '/auth/reset-password', [
             'token' => $token,
@@ -41,50 +48,59 @@ class AuthService {
         ]);
     }
     
+    // Lấy thông tin profile người dùng
     public function getProfile($token) {
         return $this->makeRequest('GET', '/profile', [], [
             'Authorization: Bearer ' . $token
         ]);
     }
     
+    // Cập nhật thông tin profile người dùng
     public function updateProfile($token, $data) {
         return $this->makeRequest('PUT', '/profile', $data, [
             'Authorization: Bearer ' . $token
         ]);
     }
     
+    // Phương thức riêng để thực hiện HTTP request
     private function makeRequest($method, $endpoint, $data = [], $headers = []) {
         $url = $this->baseUrl . $endpoint;
         
+        // Khởi tạo cURL
         $ch = curl_init();
         
+        // Header mặc định
         $defaultHeaders = [
             'Content-Type: application/json'
         ];
         
         $headers = array_merge($defaultHeaders, $headers);
         
+        // Cấu hình cURL
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         
+        // Thiết lập method HTTP và data
         if ($method === 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         } elseif ($method === 'PUT') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         } elseif ($method === 'DELETE') {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         }
         
+        // Thực hiện request và lấy kết quả
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         
         curl_close($ch);
         
+        // Xử lý lỗi kết nối
         if ($error) {
             return [
                 'success' => false,
@@ -93,6 +109,7 @@ class AuthService {
             ];
         }
         
+        // Decode JSON response và trả về kết quả
         $decodedResponse = json_decode($response, true);
         
         return [
@@ -103,9 +120,10 @@ class AuthService {
         ];
     }
 
-    // Server-side methods for backend controllers
+    // Các phương thức phía server để xử lý backend
     private static $db = null;
 
+    // Lấy kết nối database (singleton pattern)
     private static function getDB() {
         if (self::$db === null) {
             require_once __DIR__ . '/../database/Database.php';
@@ -116,13 +134,13 @@ class AuthService {
     }
 
     /**
-     * Refresh expired token (server-side)
+     * Làm mới token hết hạn (phía server)
      */
     public function refreshToken($token) {
         try {
             $db = self::getDB();
             
-            // Find user by expired token or refresh token
+            // Tìm user theo token hết hạn hoặc refresh token
             $sql = "SELECT id, refresh_token FROM users WHERE (auth_token = ? OR refresh_token = ?)";
             $stmt = $db->prepare($sql);
             $stmt->execute([$token, $token]);
@@ -133,23 +151,24 @@ class AuthService {
                 return null;
             }
             
-            // Generate new tokens
+            // Tạo token mới
             $newAuthToken = bin2hex(random_bytes(32));
             $newRefreshToken = bin2hex(random_bytes(32));
-            $newExpiresAt = date('Y-m-d H:i:s', time() + (24 * 60 * 60)); // 24 hours
+            $newExpiresAt = date('Y-m-d H:i:s', time() + (24 * 60 * 60)); // 24 giờ
             
-            // Update tokens
+            // Cập nhật token trong database
             $sql = "UPDATE users SET auth_token = ?, refresh_token = ?, token_expires_at = ? WHERE id = ?";
             $stmt = $db->prepare($sql);
             $stmt->execute([$newAuthToken, $newRefreshToken, $newExpiresAt, $user['id']]);
             
             error_log("DEBUG - RefreshToken: New tokens generated for user ID " . $user['id']);
             
+            // Trả về token mới
             return [
                 'auth_token' => $newAuthToken,
                 'refresh_token' => $newRefreshToken,
                 'expires_at' => $newExpiresAt,
-                'user_id' => intval($user['id'])
+'user_id' => intval($user['id'])
             ];
             
         } catch (Exception $e) {
@@ -159,15 +178,16 @@ class AuthService {
     }
 
     /**
-     * Get current user ID from token with auto-refresh (server-side)
+     * Lấy ID người dùng từ token với tự động làm mới (phía server)
      */
     public function getCurrentUserId() {
         try {
+            // Lấy headers từ request
             $headers = getallheaders();
             error_log("DEBUG - AuthService headers: " . json_encode($headers));
             $token = null;
 
-            // Check Authorization header (case insensitive)
+            // Tìm Authorization header (không phân biệt hoa thường)
             $authHeader = null;
             foreach ($headers as $key => $value) {
                 if (strtolower($key) === 'authorization') {
@@ -178,6 +198,7 @@ class AuthService {
             
             error_log("DEBUG - AuthService found authHeader: " . ($authHeader ?? 'null'));
             
+            // Extract token từ Bearer format
             if ($authHeader && preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
                 $token = $matches[1];
                 error_log("DEBUG - AuthService extracted token: " . substr($token, 0, 20) . "...");
@@ -190,7 +211,7 @@ class AuthService {
                 return null;
             }
 
-            // First try to validate token normally
+            // Kiểm tra token hợp lệ trước
             $db = self::getDB();
             $sql = "SELECT id FROM users WHERE auth_token = ? AND token_expires_at > NOW()";
             $stmt = $db->prepare($sql);
@@ -202,14 +223,14 @@ class AuthService {
                 return intval($user['id']);
             }
             
-            // If token is expired, try to refresh it
+            // Nếu token hết hạn, thử làm mới
             error_log("DEBUG - AuthService: Token expired, attempting refresh");
             $refreshResult = $this->refreshToken($token);
             
             if ($refreshResult) {
                 error_log("DEBUG - AuthService: Token refreshed successfully for user ID " . $refreshResult['user_id']);
                 
-                // Return user ID and set response header with new token
+                // Trả về user ID và set header với token mới
                 header('X-New-Auth-Token: ' . $refreshResult['auth_token']);
                 header('X-Token-Refreshed: true');
                 
@@ -227,7 +248,7 @@ class AuthService {
 
 
     /**
-     * Check if user is admin (server-side)
+* Kiểm tra user có phải admin không (phía server)
      */
     public function isAdmin($userId) {
         try {
@@ -245,7 +266,7 @@ class AuthService {
     }
 
     /**
-     * Get user info by ID (server-side)
+     * Lấy thông tin user theo ID (phía server)
      */
     public function getUserById($userId) {
         try {
