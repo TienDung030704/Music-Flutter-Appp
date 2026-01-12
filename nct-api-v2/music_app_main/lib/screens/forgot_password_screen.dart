@@ -314,7 +314,7 @@ style: TextStyle(fontSize: 14, color: Colors.blue[800]),
 
         SizedBox(height: 16),
 
-        // Nút quay lại màn hình đăng nhập
+        // Nút quay trở lại màn hình đăng nhập
         ElevatedButton(
           onPressed: () => Navigator.pop(context),
           style: ElevatedButton.styleFrom(
