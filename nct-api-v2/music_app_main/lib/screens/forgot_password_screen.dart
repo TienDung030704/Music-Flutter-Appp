@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
+// Màn hình quên mật khẩu cho phép người dùng khôi phục tài khoản
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -9,28 +10,37 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  // Controller để quản lý input email
   final TextEditingController _emailController = TextEditingController();
+  // Key để validate form
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  // Biến trạng thái đang loading
   bool _isLoading = false;
+  // Biến trạng thái đã gửi email thành công
   bool _emailSent = false;
 
   @override
   void dispose() {
+    // Giải phóng bộ nhớ khi widget bị hủy
     _emailController.dispose();
     super.dispose();
   }
 
+  // Xử lý logic gửi email khôi phục mật khẩu
   Future<void> _handleForgotPassword() async {
+    // Kiểm tra validation form trước khi gửi
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    // Bắt đầu trạng thái loading
     setState(() => _isLoading = true);
 
-    // Simulate API call
+    // Mô phỏng gọi API (delay 2 giây)
     await Future.delayed(Duration(seconds: 2));
 
+    // Kết thúc loading và chuyển sang màn hình thành công
     setState(() {
       _isLoading = false;
       _emailSent = true;
@@ -41,6 +51,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      // Thanh tiêu đề với nút quay lại
       appBar: AppBar(
         backgroundColor: AppTheme.background,
         elevation: 0,
@@ -57,6 +68,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ),
       ),
+      // Nội dung có thể cuộn, hiển thị form hoặc màn hình thành công
       body: SingleChildScrollView(
         padding: EdgeInsets.all(24),
         child: _emailSent ? _buildSuccessView() : _buildFormView(),
@@ -64,6 +76,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
+  // Widget hiển thị form nhập email
   Widget _buildFormView() {
     return Form(
       key: _formKey,
@@ -72,7 +85,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         children: [
           SizedBox(height: 40),
 
-          // Icon
+          // Icon khóa reset ở giữa màn hình
           Container(
             width: 120,
             height: 120,
@@ -85,7 +98,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           SizedBox(height: 40),
 
-          Text(
+          // Tiêu đề chính
+Text(
             'Khôi phục mật khẩu',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -97,6 +111,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           SizedBox(height: 16),
 
+          // Mô tả hướng dẫn
           Text(
             'Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.',
             textAlign: TextAlign.center,
@@ -109,7 +124,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           SizedBox(height: 40),
 
-          // Email Field
+          // Ô input email với validation
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
@@ -128,6 +143,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               filled: true,
               fillColor: AppTheme.surface,
             ),
+            // Validator kiểm tra email hợp lệ
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Vui lòng nhập email';
@@ -143,7 +159,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           SizedBox(height: 32),
 
-          // Send Button
+          // Nút gửi email với loading indicator
           ElevatedButton(
             onPressed: _isLoading ? null : _handleForgotPassword,
             style: ElevatedButton.styleFrom(
@@ -166,13 +182,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   )
                 : Text(
                     'Gửi liên kết khôi phục',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
           ),
 
           SizedBox(height: 24),
 
-          // Back to Login
+          // Link quay lại màn hình đăng nhập
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -197,13 +213,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
+  // Widget hiển thị màn hình thành công sau khi gửi email
   Widget _buildSuccessView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: 60),
 
-        // Success Icon
+        // Icon thành công
         Container(
           width: 120,
           height: 120,
@@ -216,6 +233,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         SizedBox(height: 40),
 
+        // Thông báo thành công
         Text(
           'Email đã được gửi!',
           textAlign: TextAlign.center,
@@ -228,6 +246,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         SizedBox(height: 16),
 
+        // Thông tin đã gửi email đến địa chỉ nào
         Text(
           'Chúng tôi đã gửi liên kết khôi phục mật khẩu đến',
           textAlign: TextAlign.center,
@@ -236,6 +255,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         SizedBox(height: 8),
 
+        // Hiển thị địa chỉ email đã nhập
         Text(
           _emailController.text,
           textAlign: TextAlign.center,
@@ -248,6 +268,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         SizedBox(height: 24),
 
+        // Hộp thông tin hướng dẫn tiếp theo
         Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -261,7 +282,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               Text(
                 'Kiểm tra hộp thư đến của bạn và nhấn vào liên kết trong email để đặt lại mật khẩu.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.blue[800]),
+style: TextStyle(fontSize: 14, color: Colors.blue[800]),
               ),
             ],
           ),
@@ -269,7 +290,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         SizedBox(height: 40),
 
-        // Resend Button
+        // Nút gửi lại email
         OutlinedButton(
           onPressed: () {
             setState(() => _emailSent = false);
@@ -293,7 +314,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         SizedBox(height: 16),
 
-        // Back to Login Button
+        // Nút quay lại màn hình đăng nhập
         ElevatedButton(
           onPressed: () => Navigator.pop(context),
           style: ElevatedButton.styleFrom(
